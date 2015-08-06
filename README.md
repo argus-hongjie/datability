@@ -1,7 +1,8 @@
 # Datability
 
 Test what matter the most in your Integration test.
-Disable constraints, primary keys, foreigh keys, not nulls, checks...
+
+Disable constraints, primary keys, foreigh keys, not nulls, checks... and insert only the data that matters.
 
 ## Databases support
 
