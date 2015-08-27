@@ -1,5 +1,7 @@
 # Datability
 
+[![Build Status](https://travis-ci.org/tomsquest/datability.svg?branch=master)](https://travis-ci.org/tomsquest/datability)
+
 Test what matter the most in your Integration test.
 
 Disable constraints, primary keys, foreigh keys, not nulls, checks... and insert only the data that matters.
