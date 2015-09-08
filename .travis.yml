@@ -10,8 +10,16 @@ cache:
 services:
   - postgresql
 
-addons:
-  postgresql: '9.3'
+env:
+  matrix:
+    - PGVERSION=9.4
+    - PGVERSION=9.3
+
+before_install:
+  - psql --version
+  - sudo /etc/init.d/postgresql stop
+  - sudo /etc/init.d/postgresql start $PGVERSION
+  - psql --version
 
 before_script:
     - psql -U postgres -c 'create database datability;'
