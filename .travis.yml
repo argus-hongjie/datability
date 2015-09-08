@@ -5,4 +5,13 @@ jdk:
 
 cache:
   directories:
-    - '$HOME/.m2/repository
+    - '$HOME/.m2/repository'
+
+services:
+  - postgresql
+
+addons:
+  postgresql: '9.3'
+
+before_script:
+    - psql -U postgres -c 'create database databilitydb;'
