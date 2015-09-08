@@ -15,7 +15,7 @@ env:
 
 before_script:
   - psql --version
-  - sudo /etc/init.d/postgresql stop
-  - sudo /etc/init.d/postgresql start $PGVERSION
+  - /etc/init.d/postgresql stop
+  - /etc/init.d/postgresql start $PGVERSION
   - psql --version
   - psql -U postgres -c 'create database datability;'
