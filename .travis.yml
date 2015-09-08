@@ -7,9 +7,6 @@ cache:
   directories:
     - '$HOME/.m2/repository'
 
-services:
-  - postgresql
-
 env:
   - PGVERSION=9.4
   - PGVERSION=9.3
