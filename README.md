@@ -4,7 +4,7 @@
 
 Test what matter the most in your Integration test.
 
-Disable primary keys, foreigh keys, not nulls, checks... and insert only the data that matters.
+Drop primary keys, foreigh keys, not nulls, checks... and insert only the data that matters.
 
 ## Usage
 
@@ -18,10 +18,10 @@ Connection connection = DriverManager
 connection.createStatement()
     .execute("create table mytable (notnullcolumn int not null)");
 
-// Here the magic happens : disable those nasty constraints !
+// Here the magic happens : drop those nasty constraints !
 Databases
     .postgresql(connection)
-    .disableNotNulls("mytable", "anothertable");
+    .dropNotNulls("mytable", "anothertable");
 
 // Test that the constraint where removed
 connection.createStatement()

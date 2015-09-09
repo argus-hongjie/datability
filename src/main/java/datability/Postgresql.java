@@ -19,7 +19,7 @@ public class Postgresql implements Database {
     }
 
     @Override
-    public Database disableNotNulls(String... tables) {
+    public Database dropNotNulls(String... tables) {
         try {
             for (String table : tables) {
                 for (String column : findNotNullColumns(table)) {

@@ -1,7 +1,6 @@
 package datability;
 
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 import java.sql.Connection;
@@ -16,7 +15,7 @@ public class PostgreSqlTest {
         postgreSql.execute("drop table if exists mytable", "create table mytable (a int not null)");
 
         try (Connection connection = postgreSql.openConnection()) {
-            Databases.postgresql(connection).disableNotNulls("mytable");
+            Databases.postgresql(connection).dropNotNulls("mytable");
             connection.createStatement().execute("insert into mytable(a) values (null)");
         }
     }
@@ -26,7 +25,7 @@ public class PostgreSqlTest {
         postgreSql.execute("drop table if exists mytable", "create table mytable (a int not null, b text not null)");
 
         try (Connection connection = postgreSql.openConnection()) {
-            Databases.postgresql(connection).disableNotNulls("mytable");
+            Databases.postgresql(connection).dropNotNulls("mytable");
             connection.createStatement().execute("insert into mytable(a,b) values (null,null)");
         }
     }
@@ -36,7 +35,7 @@ public class PostgreSqlTest {
         postgreSql.execute("drop table if exists mytable", "create table mytable (a int primary key, b int not null)");
 
         try (Connection connection = postgreSql.openConnection()) {
-            Databases.postgresql(connection).disableNotNulls("mytable");
+            Databases.postgresql(connection).dropNotNulls("mytable");
             connection.createStatement().execute("insert into mytable(a,b) values (1, null)");
         }
     }
@@ -46,7 +45,7 @@ public class PostgreSqlTest {
         postgreSql.execute("drop table if exists mytable", "create table mytable (a int, b int, c int not null, primary key (a,b))");
 
         try (Connection connection = postgreSql.openConnection()) {
-            Databases.postgresql(connection).disableNotNulls("mytable");
+            Databases.postgresql(connection).dropNotNulls("mytable");
             connection.createStatement().execute("insert into mytable(a,b,c) values (1,1,null)");
         }
     }
@@ -58,7 +57,7 @@ public class PostgreSqlTest {
                 "drop table if exists tableb", "create table tableb (c int not null, d text not null)");
 
         try (Connection connection = postgreSql.openConnection()) {
-            Databases.postgresql(connection).disableNotNulls("tablea", "tableb");
+            Databases.postgresql(connection).dropNotNulls("tablea", "tableb");
             connection.createStatement().execute("insert into tablea(a,b) values (null, null)");
             connection.createStatement().execute("insert into tableb(c,d) values (null, null)");
         }
