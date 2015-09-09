@@ -64,6 +64,7 @@ public class Postgresql implements Database {
             throw new DatabaseException(sql, e);
         }
 
+        // Cannot drop-non-null from columns part of a primary key
         notNullsColumns.removeAll(findPrimaryKeys(table));
 
         return notNullsColumns;

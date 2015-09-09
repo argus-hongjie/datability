@@ -37,6 +37,13 @@ connection.createStatement()
   * [ ] Drop foreign keys
   * [ ] Drop checks
   * [ ] Drop all constraints (oneliner)
+  
+## Hints
+
+### PostgreSQL
+
+It is not possible to drop not null on primary keys.
+So the best way to forget about not-null primary keys is to first `dropPrimaryKeys()` then `dropNotNulls()`.
 
 ## Todo
 
