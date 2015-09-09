@@ -23,8 +23,24 @@ public class Postgresql implements Database {
         try {
             for (String table : tables) {
                 for (String column : findNotNullColumns(table)) {
-                    LOG.debug("Disabling not-null on column '{}' of table '{}'", column, table);
+                    LOG.debug("Disabling not-null ON column '{}' of table '{}'", column, table);
                     executeSql("ALTER TABLE " + table + " ALTER " + column + " DROP NOT NULL");
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return this;
+    }
+
+    @Override
+    public Database dropPrimaryKeys(String... tables) {
+        try {
+            for (String table : tables) {
+                for (String primaryKey : findIndexes(table)) {
+                    LOG.debug("Disabling not-null ON primaryKey '{}' of table '{}'", primaryKey, table);
+                    executeSql("ALTER TABLE " + table + " DROP CONSTRAINT " + primaryKey);
                 }
             }
         } catch (SQLException e) {
@@ -56,8 +72,16 @@ public class Postgresql implements Database {
     private List<String> findPrimaryKeys(String table) throws SQLException {
         return getFirstColumnValues("SELECT a.attname" +
                 " FROM pg_index i JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY (i.indkey)" +
-                " WHERE i.indrelid = '" + table + "' :: REGCLASS AND i.indisprimary");
+                " WHERE i.indrelid = '" + table + "'::REGCLASS AND i.indisprimary");
 
+    }
+
+    private List<String> findIndexes(String table) throws SQLException {
+        return getFirstColumnValues("SELECT i.relname as index_name" +
+                " FROM pg_class t JOIN pg_attribute a ON a.attrelid = t.oid" +
+                "  JOIN pg_index ix    ON t.oid = ix.indrelid AND a.attnum = ANY(ix.indkey)" +
+                "  JOIN pg_class i     ON i.oid = ix.indexrelid" +
+                " WHERE t.relkind = 'r' AND t.relname in ('"+ table +"')");
     }
 
     private List<String> getFirstColumnValues(String sql) throws SQLException {
