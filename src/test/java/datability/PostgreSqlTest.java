@@ -1,17 +1,47 @@
 package datability;
 
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 
 public class PostgreSqlTest {
 
+    @ClassRule
+    public static PostgresqlRule postgreSql = new PostgresqlRule();
+
     @Test
-    public void travisPostgresqlConnection() throws Exception {
-        Class.forName("org.postgresql.Driver");
-        try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/datability", "postgres", "")) {
-            connection.prepareStatement("select 1+1").execute();
+    public void table_with_not_null() throws Exception {
+        postgreSql.execute("drop table if exists mytable", "create table mytable (a int not null)");
+
+        try (Connection connection = postgreSql.openConnection()) {
+            Databases.postgresql(connection).disableNotNulls("mytable");
+            connection.prepareStatement("insert into mytable(a) values (null)").execute();
         }
     }
+
+    @Test
+    public void table_with_many_not_nulls() throws Exception {
+        postgreSql.execute("drop table if exists mytable", "create table mytable (a int not null, b text not null)");
+
+        try (Connection connection = postgreSql.openConnection()) {
+            Databases.postgresql(connection).disableNotNulls("mytable");
+            connection.prepareStatement("insert into mytable(a,b) values (null,null)").execute();
+        }
+    }
+
+    @Test
+    public void two_tables_with_not_nulls() throws Exception {
+        postgreSql.execute(
+                "drop table if exists tablea", "create table tablea (a int not null, b text not null)",
+                "drop table if exists tableb", "create table tableb (c int not null, d text not null)");
+
+        try (Connection connection = postgreSql.openConnection()) {
+            Databases.postgresql(connection).disableNotNulls("tablea", "tableb");
+            connection.prepareStatement("insert into tablea(a,b) values (null, null)").execute();
+            connection.prepareStatement("insert into tableb(c,d) values (null, null)").execute();
+        }
+    }
+
 }

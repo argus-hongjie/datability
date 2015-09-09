@@ -4,18 +4,26 @@
 
 Test what matter the most in your Integration test.
 
-Disable constraints, primary keys, foreigh keys, not nulls, checks... and insert only the data that matters.
+Disable primary keys, foreigh keys, not nulls, checks... and insert only the data that matters.
 
 ## Databases support
 
-* Tested with PostgreSQL 9.4
+* [ ] PostgreSQL 9.4
+  * [x] Multiple tables
+  * [x] Drop not-nulls
+  * [ ] Drop primary keys
+  * [ ] Drop foreign keys
+  * [ ] Drop checks
 
 ## Todo
 
-* Use plain Jdbc instead of spring-jdbc to avoid this dependency
+* [ ] Explain Why it matters to testing only the relevant data
+* [ ] Upload to Central and update readme with <dependency>
 * Support additional databases
-  * H2
-  * Hsql
-  * MySQL
-  * Oracle
-  * SqlServer
+  * [ ] MySQL
+  * [ ] Oracle
+  * [ ] SqlServer
+* Connection to the database
+  * [ ] Using a jdbc url
+  * [ ] Using a DataSource
+* [ ] Datability could close the opened connection
