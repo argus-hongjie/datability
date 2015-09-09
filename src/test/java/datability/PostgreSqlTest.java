@@ -17,7 +17,7 @@ public class PostgreSqlTest {
 
         try (Connection connection = postgreSql.openConnection()) {
             Databases.postgresql(connection).disableNotNulls("mytable");
-            connection.prepareStatement("insert into mytable(a) values (null)").execute();
+            connection.createStatement().execute("insert into mytable(a) values (null)");
         }
     }
 
@@ -27,7 +27,7 @@ public class PostgreSqlTest {
 
         try (Connection connection = postgreSql.openConnection()) {
             Databases.postgresql(connection).disableNotNulls("mytable");
-            connection.prepareStatement("insert into mytable(a,b) values (null,null)").execute();
+            connection.createStatement().execute("insert into mytable(a,b) values (null,null)");
         }
     }
 
@@ -39,8 +39,8 @@ public class PostgreSqlTest {
 
         try (Connection connection = postgreSql.openConnection()) {
             Databases.postgresql(connection).disableNotNulls("tablea", "tableb");
-            connection.prepareStatement("insert into tablea(a,b) values (null, null)").execute();
-            connection.prepareStatement("insert into tableb(c,d) values (null, null)").execute();
+            connection.createStatement().execute("insert into tablea(a,b) values (null, null)");
+            connection.createStatement().execute("insert into tableb(c,d) values (null, null)");
         }
     }
 
