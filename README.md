@@ -11,10 +11,12 @@ Disable primary keys, foreigh keys, not nulls, checks... and insert only the dat
 Example with PostgreSQL:
 
 ``` java
-Connection connection = DriverManager.getConnection("jdbc:postgresql://host:port/database", "user", "pass");
+Connection connection = DriverManager
+    .getConnection("jdbc:postgresql://host:port/database", "user", "pass");
 
 // Create a test table
-connection.createStatement().execute("create table mytable (notnullcolumn int not null)");
+connection.createStatement()
+    .execute("create table mytable (notnullcolumn int not null)");
 
 // Here the magic happens : disable those nasty constraints !
 Databases
@@ -28,7 +30,7 @@ connection.createStatement()
 
 ## Databases support
 
-* [ ] PostgreSQL 9.4
+* [ ] PostgreSQL 9.x
   * [x] Multiple tables
   * [x] Drop not-nulls
   * [ ] Drop primary keys
