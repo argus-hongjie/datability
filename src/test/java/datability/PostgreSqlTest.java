@@ -32,6 +32,16 @@ public class PostgreSqlTest {
     }
 
     @Test
+    public void table_with_not_null_and_primary_key() throws Exception {
+        postgreSql.execute("drop table if exists mytable", "create table mytable (a int primary key, b int not null)");
+
+        try (Connection connection = postgreSql.openConnection()) {
+            Databases.postgresql(connection).disableNotNulls("mytable");
+            connection.createStatement().execute("insert into mytable(a,b) values (1, null)");
+        }
+    }
+
+    @Test
     public void two_tables_with_not_nulls() throws Exception {
         postgreSql.execute(
                 "drop table if exists tablea", "create table tablea (a int not null, b text not null)",
@@ -43,5 +53,4 @@ public class PostgreSqlTest {
             connection.createStatement().execute("insert into tableb(c,d) values (null, null)");
         }
     }
-
 }

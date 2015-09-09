@@ -20,17 +20,22 @@ public class Postgresql implements Database {
 
     @Override
     public Database disableNotNulls(String... tables) {
-        for (String table : tables) {
-            for (String column : findNotNullColumns(table)) {
-                LOG.debug("Disabling not-null on column '{}' of table '{}'", column, table);
-                executeSql("ALTER TABLE " + table + " ALTER " + column + " DROP NOT NULL");
+        try {
+            for (String table : tables) {
+                for (String column : findNotNullColumns(table)) {
+                    LOG.debug("Disabling not-null on column '{}' of table '{}'", column, table);
+                    executeSql("ALTER TABLE " + table + " ALTER " + column + " DROP NOT NULL");
+                }
             }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
         }
+
         return this;
     }
 
-    private List<String> findNotNullColumns(String table) {
-        List<String> notNullsColumn = new ArrayList<>();
+    private List<String> findNotNullColumns(String table) throws SQLException {
+        List<String> notNullsColumns = new ArrayList<>();
 
         String sql = "SELECT DISTINCT column_name FROM INFORMATION_SCHEMA.COLUMNS" +
                 " WHERE column_name IS NOT NULL" +
@@ -38,12 +43,21 @@ public class Postgresql implements Database {
                 " AND columns.is_nullable='NO'";
 
         try {
-            notNullsColumn.addAll(getFirstColumnValues(sql));
+            notNullsColumns.addAll(getFirstColumnValues(sql));
         } catch (SQLException e) {
             throw new DatabaseException(sql, e);
         }
 
-        return notNullsColumn;
+        notNullsColumns.removeAll(findPrimaryKeys(table));
+
+        return notNullsColumns;
+    }
+
+    private List<String> findPrimaryKeys(String table) throws SQLException {
+        return getFirstColumnValues("SELECT a.attname" +
+                " FROM pg_index i JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY (i.indkey)" +
+                " WHERE i.indrelid = '" + table + "' :: REGCLASS AND i.indisprimary");
+
     }
 
     private List<String> getFirstColumnValues(String sql) throws SQLException {
