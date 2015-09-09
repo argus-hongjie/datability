@@ -36,6 +36,7 @@ connection.createStatement()
   * [ ] Drop primary keys
   * [ ] Drop foreign keys
   * [ ] Drop checks
+  * [ ] Drop all constraints (oneliner)
 
 ## Todo
 
