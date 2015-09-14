@@ -1,20 +1,18 @@
 package datability;
 
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class PostgreSqlTest {
 
-    @ClassRule
-    public static PostgresqlRule postgreSql = new PostgresqlRule();
-
     @Test
     public void drop_not_nulls_on_single_table() throws Exception {
-        postgreSql.execute("drop table if exists mytable", "create table mytable (a int not null)");
+        executeSql("drop table if exists mytable", "create table mytable (a int not null)");
 
-        try (Connection connection = postgreSql.openConnection()) {
+        try (Connection connection = openConnection()) {
             Databases.postgresql(connection).dropNotNulls("mytable");
             connection.createStatement().execute("insert into mytable(a) values (null)");
         }
@@ -22,9 +20,9 @@ public class PostgreSqlTest {
 
     @Test
     public void drop_not_nulls_on_single_table_with_many_not_nulls() throws Exception {
-        postgreSql.execute("drop table if exists mytable", "create table mytable (a int not null, b text not null)");
+        executeSql("drop table if exists mytable", "create table mytable (a int not null, b text not null)");
 
-        try (Connection connection = postgreSql.openConnection()) {
+        try (Connection connection = openConnection()) {
             Databases.postgresql(connection).dropNotNulls("mytable");
             connection.createStatement().execute("insert into mytable(a,b) values (null,null)");
         }
@@ -32,9 +30,9 @@ public class PostgreSqlTest {
 
     @Test
     public void drop_not_nulls_on_single_table_with_primary_key() throws Exception {
-        postgreSql.execute("drop table if exists mytable", "create table mytable (a int primary key not null, b int not null)");
+        executeSql("drop table if exists mytable", "create table mytable (a int primary key not null, b int not null)");
 
-        try (Connection connection = postgreSql.openConnection()) {
+        try (Connection connection = openConnection()) {
             Databases.postgresql(connection).dropNotNulls("mytable");
             connection.createStatement().execute("insert into mytable(a,b) values (1, null)");
         }
@@ -42,9 +40,9 @@ public class PostgreSqlTest {
 
     @Test
     public void drop_not_nulls_on_single_table_with_composite_primary_key() throws Exception {
-        postgreSql.execute("drop table if exists mytable", "create table mytable (a int not null, b int not null, c int not null, primary key (a,b))");
+        executeSql("drop table if exists mytable", "create table mytable (a int not null, b int not null, c int not null, primary key (a,b))");
 
-        try (Connection connection = postgreSql.openConnection()) {
+        try (Connection connection = openConnection()) {
             Databases.postgresql(connection).dropNotNulls("mytable");
             connection.createStatement().execute("insert into mytable(a,b,c) values (1,1,null)");
         }
@@ -52,11 +50,11 @@ public class PostgreSqlTest {
 
     @Test
     public void drop_not_nulls_on_multiple_tables() throws Exception {
-        postgreSql.execute(
+        executeSql(
                 "drop table if exists mytable", "create table mytable (a int not null, b text not null)",
                 "drop table if exists mytable2", "create table mytable2 (c int not null, d text not null)");
 
-        try (Connection connection = postgreSql.openConnection()) {
+        try (Connection connection = openConnection()) {
             Databases.postgresql(connection).dropNotNulls("mytable", "mytable2");
             connection.createStatement().execute("insert into mytable(a,b) values (null, null)");
             connection.createStatement().execute("insert into mytable2(c,d) values (null, null)");
@@ -65,9 +63,9 @@ public class PostgreSqlTest {
 
     @Test
     public void drop_primary_keys_on_single_table() throws Exception {
-        postgreSql.execute("drop table if exists mytable", "create table mytable (a int primary key)");
+        executeSql("drop table if exists mytable", "create table mytable (a int primary key)");
 
-        try (Connection connection = postgreSql.openConnection()) {
+        try (Connection connection = openConnection()) {
             Databases.postgresql(connection).dropPrimaryKeys("mytable");
             connection.createStatement().execute("insert into mytable(a) values (1)");
             connection.createStatement().execute("insert into mytable(a) values (1)");
@@ -76,11 +74,11 @@ public class PostgreSqlTest {
 
     @Test
     public void drop_primary_keys_on_multiple_tables() throws Exception {
-        postgreSql.execute(
+        executeSql(
                 "drop table if exists mytable", "create table mytable (a int primary key)",
                 "drop table if exists mytable2", "create table mytable2 (b int primary key)");
 
-        try (Connection connection = postgreSql.openConnection()) {
+        try (Connection connection = openConnection()) {
             Databases.postgresql(connection).dropPrimaryKeys("mytable", "mytable2");
             connection.createStatement().execute("insert into mytable(a) values (1)");
             connection.createStatement().execute("insert into mytable(a) values (1)");
@@ -91,13 +89,13 @@ public class PostgreSqlTest {
 
     @Test
     public void drop_foreign_keys_on_single_table() throws Exception {
-        postgreSql.execute(
+        executeSql(
                 "drop table if exists foreigntable", "drop table if exists srctable",
                 "create table srctable (id int primary key)",
                 "create table foreigntable (fk int, foreign key (fk) REFERENCES srctable(id))"
         );
 
-        try (Connection connection = postgreSql.openConnection()) {
+        try (Connection connection = openConnection()) {
             Databases.postgresql(connection).dropForeignKeys("foreigntable");
             connection.createStatement().execute("insert into foreigntable(fk) values (1)");
         }
@@ -105,17 +103,29 @@ public class PostgreSqlTest {
 
     @Test
     public void drop_foreign_keys_on_multiples_tables() throws Exception {
-        postgreSql.execute(
+        executeSql(
                 "drop table if exists foreignforeigntable", "drop table if exists foreigntable", "drop table if exists srctable",
                 "create table srctable (id int primary key)",
                 "create table foreigntable (fk int primary key, foreign key (fk) REFERENCES srctable(id))",
                 "create table foreignforeigntable (fkfk int, foreign key (fkfk) REFERENCES foreigntable(fk))"
         );
 
-        try (Connection connection = postgreSql.openConnection()) {
+        try (Connection connection = openConnection()) {
             Databases.postgresql(connection).dropForeignKeys("foreignforeigntable", "foreigntable");
             connection.createStatement().execute("insert into foreignforeigntable(fkfk) values (1)");
             connection.createStatement().execute("insert into foreigntable(fk) values (1)");
+        }
+    }
+
+    private Connection openConnection() throws SQLException {
+        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/datability", "postgres", "");
+    }
+
+    private void executeSql(String... sqls) throws SQLException {
+        try (Connection conn = openConnection()) {
+            for (String sql : sqls) {
+                conn.createStatement().execute(sql);
+            }
         }
     }
 }
