@@ -4,7 +4,7 @@
 
 Test what matter the most in your Integration test.
 
-Drop primary keys, foreigh keys, not nulls, checks... and insert only the data that matters.
+Drop primary keys, foreign keys, not nulls to let you test insert only the data that matters.
 
 ## Usage
 
@@ -34,16 +34,15 @@ connection.createStatement()
   * [x] Multiple tables
   * [x] Drop not-nulls
   * [x] Drop primary keys
-  * [ ] Drop foreign keys
-  * [ ] Drop checks
+  * [x] Drop foreign keys
   * [ ] Drop all constraints (oneliner)
   
 ## Hints
 
 ### PostgreSQL
 
-It is not possible to drop not null on primary keys.
-So the best way to forget about not-null primary keys is to first `dropPrimaryKeys()` then `dropNotNulls()`.
+It is not possible to drop not null on primary keys without removing the primary keys first.
+So first, execute `dropPrimaryKeys()`, then `dropNotNulls()`.
 
 ## Todo
 

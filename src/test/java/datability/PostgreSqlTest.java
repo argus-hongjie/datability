@@ -88,4 +88,34 @@ public class PostgreSqlTest {
             connection.createStatement().execute("insert into mytable2(b) values (1)");
         }
     }
+
+    @Test
+    public void drop_foreign_keys_on_single_table() throws Exception {
+        postgreSql.execute(
+                "drop table if exists foreigntable", "drop table if exists srctable",
+                "create table srctable (id int primary key)",
+                "create table foreigntable (fk int, foreign key (fk) REFERENCES srctable(id))"
+        );
+
+        try (Connection connection = postgreSql.openConnection()) {
+            Databases.postgresql(connection).dropForeignKeys("foreigntable");
+            connection.createStatement().execute("insert into foreigntable(fk) values (1)");
+        }
+    }
+
+    @Test
+    public void drop_foreign_keys_on_multiples_tables() throws Exception {
+        postgreSql.execute(
+                "drop table if exists foreignforeigntable", "drop table if exists foreigntable", "drop table if exists srctable",
+                "create table srctable (id int primary key)",
+                "create table foreigntable (fk int primary key, foreign key (fk) REFERENCES srctable(id))",
+                "create table foreignforeigntable (fkfk int, foreign key (fkfk) REFERENCES foreigntable(fk))"
+        );
+
+        try (Connection connection = postgreSql.openConnection()) {
+            Databases.postgresql(connection).dropForeignKeys("foreignforeigntable", "foreigntable");
+            connection.createStatement().execute("insert into foreignforeigntable(fkfk) values (1)");
+            connection.createStatement().execute("insert into foreigntable(fk) values (1)");
+        }
+    }
 }

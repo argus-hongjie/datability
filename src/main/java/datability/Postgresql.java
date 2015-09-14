@@ -23,7 +23,7 @@ public class Postgresql implements Database {
         try {
             for (String table : tables) {
                 for (String column : findNotNullColumns(table)) {
-                    LOG.debug("Disabling not-null ON column '{}' of table '{}'", column, table);
+                    LOG.info("Disabling not-null ON column '{}' of table '{}'", column, table);
                     executeSql("ALTER TABLE " + table + " ALTER " + column + " DROP NOT NULL");
                 }
             }
@@ -39,8 +39,24 @@ public class Postgresql implements Database {
         try {
             for (String table : tables) {
                 for (String primaryKey : findIndexes(table)) {
-                    LOG.debug("Disabling not-null ON primaryKey '{}' of table '{}'", primaryKey, table);
+                    LOG.info("Disabling primary key '{}' of table '{}'", primaryKey, table);
                     executeSql("ALTER TABLE " + table + " DROP CONSTRAINT " + primaryKey);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return this;
+    }
+
+    @Override
+    public Database dropForeignKeys(String... tables) {
+        try {
+            for (String table : tables) {
+                for (String foreignKey : findForeignKeys(table)) {
+                    LOG.info("Disabling foreign key '{}' of table '{}'", foreignKey, table);
+                    executeSql("ALTER TABLE " + table + " DROP CONSTRAINT " + foreignKey);
                 }
             }
         } catch (SQLException e) {
@@ -80,9 +96,16 @@ public class Postgresql implements Database {
     private List<String> findIndexes(String table) throws SQLException {
         return getFirstColumnValues("SELECT i.relname as index_name" +
                 " FROM pg_class t JOIN pg_attribute a ON a.attrelid = t.oid" +
-                "  JOIN pg_index ix    ON t.oid = ix.indrelid AND a.attnum = ANY(ix.indkey)" +
-                "  JOIN pg_class i     ON i.oid = ix.indexrelid" +
-                " WHERE t.relkind = 'r' AND t.relname in ('"+ table +"')");
+                "  JOIN pg_index ix ON t.oid = ix.indrelid AND a.attnum = ANY(ix.indkey)" +
+                "  JOIN pg_class i ON i.oid = ix.indexrelid" +
+                " WHERE t.relkind = 'r' AND t.relname in ('" + table + "')");
+    }
+
+    private List<String> findForeignKeys(String table) throws SQLException {
+        return getFirstColumnValues("SELECT constraint_name" +
+                " FROM information_schema.table_constraints" +
+                " WHERE constraint_type = 'FOREIGN KEY'" +
+                " AND table_name='" + table + "'");
     }
 
     private List<String> getFirstColumnValues(String sql) throws SQLException {

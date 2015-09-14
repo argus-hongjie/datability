@@ -17,4 +17,9 @@ public interface Database {
      * This remove unique constraints which are in fact primary keys.
      */
     Database dropPrimaryKeys(String... tables);
+
+    /**
+     * Drop foreign key constraints.
+     */
+    Database dropForeignKeys(String... tables);
 }
