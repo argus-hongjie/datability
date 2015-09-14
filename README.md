@@ -54,7 +54,4 @@ So first, execute `dropPrimaryKeys()`, then `dropNotNulls()`.
   * [ ] MySQL
   * [ ] Oracle
   * [ ] SqlServer
-* Connection to the database
-  * [ ] Using a jdbc url
-  * [ ] Using a DataSource
 * [ ] Datability could close the opened connection
