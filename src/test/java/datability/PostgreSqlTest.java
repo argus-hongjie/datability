@@ -6,6 +6,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import static org.assertj.core.api.StrictAssertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+
 public class PostgreSqlTest {
 
     @Test
@@ -130,6 +134,14 @@ public class PostgreSqlTest {
             connection.createStatement().execute("insert into foreignforeigntable(fkfk) values (1)");
             connection.createStatement().execute("insert into foreigntable(fk) values (1)");
         }
+    }
+
+    @Test
+    public void closed_connection() throws Exception {
+        Connection connection = mock(Connection.class);
+        given(connection.isClosed()).willReturn(true);
+
+        assertThatThrownBy(() -> Databases.postgresql(connection)).isInstanceOf(DatabaseException.class);
     }
 
     private Connection openConnection() throws SQLException {

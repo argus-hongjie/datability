@@ -15,7 +15,8 @@ public class Postgresql implements Database {
     private final Connection connection;
 
     public Postgresql(Connection connection) {
-        this.connection = connection;
+        this.connection = Assert.notNull(connection, "A connection is required");
+        assertValidConnection(connection);
     }
 
     @Override
@@ -130,6 +131,16 @@ public class Postgresql implements Database {
             connection.createStatement().execute(sql);
         } catch (SQLException e) {
             throw new DatabaseException(sql, e);
+        }
+    }
+
+    private void assertValidConnection(Connection connection) {
+        try {
+            if (connection.isClosed()) {
+                throw new DatabaseException("Connection is already closed");
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
         }
     }
 }
