@@ -11,6 +11,7 @@ Drop primary keys, foreign keys, not nulls to let you test insert only the data 
 Example with PostgreSQL:
 
 ``` java
+// Obtain a Connection
 Connection connection = DriverManager
     .getConnection("jdbc:postgresql://host:port/database", "user", "pass");
 
@@ -19,13 +20,14 @@ connection.createStatement()
     .execute("create table mytable (notnullcolumn int not null)");
 
 // Here the magic happens : drop those nasty constraints !
-Databases
-    .postgresql(connection)
-    .dropNotNulls("mytable", "anothertable");
+Databases.postgresql(connection)
+    .dropNotNulls("mytable", "anothertable")
+    .dropPrimaryKeys("mytable", "anothertable")
+    .dropForeignKeys("mytable", "anothertable");
 
-// Test that the constraint where removed
+// Success: the constraints were removed
 connection.createStatement()
-    .execute("insert into mytable(notnullcolumn) values (null)"); // Success !
+    .execute("insert into mytable(notnullcolumn) values (null)");
 ```
 
 ## Databases support
