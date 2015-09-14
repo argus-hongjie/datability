@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 import static org.assertj.core.api.StrictAssertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 public class PostgreSqlTest {
 
@@ -142,6 +142,20 @@ public class PostgreSqlTest {
         given(connection.isClosed()).willReturn(true);
 
         assertThatThrownBy(() -> Databases.postgresql(connection)).isInstanceOf(DatabaseException.class);
+    }
+
+    @Test
+    public void no_op_given_no_table_given() throws Exception {
+        Connection connection = mock(Connection.class);
+
+        Databases.postgresql(connection)
+                .dropNotNulls()
+                .dropPrimaryKeys()
+                .dropForeignKeys()
+                .dropAll();
+
+        verify(connection).isClosed();
+        verifyNoMoreInteractions(connection);
     }
 
     private Connection openConnection() throws SQLException {

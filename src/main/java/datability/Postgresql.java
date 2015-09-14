@@ -21,15 +21,17 @@ public class Postgresql implements Database {
 
     @Override
     public Database dropNotNulls(String... tables) {
-        try {
-            for (String table : tables) {
-                for (String column : findNotNullColumns(table)) {
-                    LOG.info("Disabling not-null ON column '{}' of table '{}'", column, table);
-                    executeSql("ALTER TABLE " + table + " ALTER " + column + " DROP NOT NULL");
+        if (tables != null) {
+            try {
+                for (String table : tables) {
+                    for (String column : findNotNullColumns(table)) {
+                        LOG.info("Disabling not-null ON column '{}' of table '{}'", column, table);
+                        executeSql("ALTER TABLE " + table + " ALTER " + column + " DROP NOT NULL");
+                    }
                 }
+            } catch (SQLException e) {
+                throw new DatabaseException(e);
             }
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
         }
 
         return this;
@@ -37,15 +39,17 @@ public class Postgresql implements Database {
 
     @Override
     public Database dropPrimaryKeys(String... tables) {
-        try {
-            for (String table : tables) {
-                for (String primaryKey : findIndexes(table)) {
-                    LOG.info("Disabling primary key '{}' of table '{}'", primaryKey, table);
-                    executeSql("ALTER TABLE " + table + " DROP CONSTRAINT " + primaryKey);
+        if (tables != null) {
+            try {
+                for (String table : tables) {
+                    for (String primaryKey : findIndexes(table)) {
+                        LOG.info("Disabling primary key '{}' of table '{}'", primaryKey, table);
+                        executeSql("ALTER TABLE " + table + " DROP CONSTRAINT " + primaryKey);
+                    }
                 }
+            } catch (SQLException e) {
+                throw new DatabaseException(e);
             }
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
         }
 
         return this;
@@ -53,15 +57,17 @@ public class Postgresql implements Database {
 
     @Override
     public Database dropForeignKeys(String... tables) {
-        try {
-            for (String table : tables) {
-                for (String foreignKey : findForeignKeys(table)) {
-                    LOG.info("Disabling foreign key '{}' of table '{}'", foreignKey, table);
-                    executeSql("ALTER TABLE " + table + " DROP CONSTRAINT " + foreignKey);
+        if (tables != null) {
+            try {
+                for (String table : tables) {
+                    for (String foreignKey : findForeignKeys(table)) {
+                        LOG.info("Disabling foreign key '{}' of table '{}'", foreignKey, table);
+                        executeSql("ALTER TABLE " + table + " DROP CONSTRAINT " + foreignKey);
+                    }
                 }
+            } catch (SQLException e) {
+                throw new DatabaseException(e);
             }
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
         }
 
         return this;
@@ -69,9 +75,11 @@ public class Postgresql implements Database {
 
     @Override
     public Database dropAll(String... tables) {
-        dropForeignKeys(tables);
-        dropPrimaryKeys(tables);
-        dropNotNulls(tables);
+        if (tables != null) {
+            dropForeignKeys(tables);
+            dropPrimaryKeys(tables);
+            dropNotNulls(tables);
+        }
         return this;
     }
 
