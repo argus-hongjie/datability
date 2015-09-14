@@ -104,6 +104,21 @@ public class PostgreSqlTest {
     @Test
     public void drop_foreign_keys_on_multiples_tables() throws Exception {
         executeSql(
+                "drop table if exists foreigntable", "drop table if exists srctable",
+                "create table srctable (id int primary key, col int not null)",
+                "create table foreigntable (fk int primary key, foreign key (fk) REFERENCES srctable(id))"
+        );
+
+        try (Connection connection = openConnection()) {
+            Databases.postgresql(connection).dropAll("foreigntable", "srctable");
+            connection.createStatement().execute("insert into srctable(id, col) values (null, null)");
+            connection.createStatement().execute("insert into foreigntable(fk) values (null)");
+        }
+    }
+
+    @Test
+    public void drop_all() throws Exception {
+        executeSql(
                 "drop table if exists foreignforeigntable", "drop table if exists foreigntable", "drop table if exists srctable",
                 "create table srctable (id int primary key)",
                 "create table foreigntable (fk int primary key, foreign key (fk) REFERENCES srctable(id))",

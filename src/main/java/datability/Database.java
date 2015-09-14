@@ -22,4 +22,9 @@ public interface Database {
      * Drop foreign key constraints.
      */
     Database dropForeignKeys(String... tables);
+
+    /**
+     * Drop all not nulls, primary keys and foreign keys
+     */
+    Database dropAll(String... tables);
 }

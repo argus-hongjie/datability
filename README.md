@@ -32,12 +32,12 @@ connection.createStatement()
 
 ## Databases support
 
-* [ ] PostgreSQL 9.x
+* [x] PostgreSQL 9.4
   * [x] Multiple tables
   * [x] Drop not-nulls
   * [x] Drop primary keys
   * [x] Drop foreign keys
-  * [ ] Drop all constraints (oneliner)
+  * [x] Drop all constraints (oneliner)
   
 ## Hints
 
@@ -48,10 +48,9 @@ So first, execute `dropPrimaryKeys()`, then `dropNotNulls()`.
 
 ## Todo
 
-* [ ] Explain Why it matters to testing only the relevant data
 * [ ] Upload to Central and update readme with <dependency>
+* [ ] Explain Why it matters to testing only the relevant data
 * Support additional databases
   * [ ] MySQL
   * [ ] Oracle
   * [ ] SqlServer
-* [ ] Datability could close the opened connection

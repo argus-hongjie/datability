@@ -66,6 +66,14 @@ public class Postgresql implements Database {
         return this;
     }
 
+    @Override
+    public Database dropAll(String... tables) {
+        dropForeignKeys(tables);
+        dropPrimaryKeys(tables);
+        dropNotNulls(tables);
+        return this;
+    }
+
     private List<String> findNotNullColumns(String table) throws SQLException {
         List<String> notNullsColumns = new ArrayList<>();
 
