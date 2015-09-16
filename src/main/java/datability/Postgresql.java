@@ -84,7 +84,7 @@ public class Postgresql implements Database {
     }
 
     private List<String> findNotNullColumns(String table) throws SQLException {
-        List<String> notNullsColumns = new ArrayList<>();
+        List<String> notNullsColumns = new ArrayList<String>();
 
         String sql = "SELECT DISTINCT column_name FROM INFORMATION_SCHEMA.COLUMNS" +
                 " WHERE column_name IS NOT NULL" +
@@ -126,7 +126,7 @@ public class Postgresql implements Database {
     }
 
     private List<String> getFirstColumnValues(String sql) throws SQLException {
-        List<String> values = new ArrayList<>();
+        List<String> values = new ArrayList<String>();
         ResultSet rs = connection.createStatement().executeQuery(sql);
         while (rs.next()) {
             values.add(rs.getString(1));

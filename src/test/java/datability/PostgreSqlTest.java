@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import static org.assertj.core.api.StrictAssertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -136,12 +135,12 @@ public class PostgreSqlTest {
         }
     }
 
-    @Test
+    @Test(expected = DatabaseException.class)
     public void closed_connection() throws Exception {
         Connection connection = mock(Connection.class);
         given(connection.isClosed()).willReturn(true);
 
-        assertThatThrownBy(() -> Databases.postgresql(connection)).isInstanceOf(DatabaseException.class);
+        Databases.postgresql(connection);
     }
 
     @Test

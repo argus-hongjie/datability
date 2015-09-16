@@ -38,13 +38,17 @@ connection.createStatement()
   * [x] Drop primary keys
   * [x] Drop foreign keys
   * [x] Drop all constraints (oneliner)
-  
+
 ## Hints
 
 ### PostgreSQL
 
 It is not possible to drop not null on primary keys without removing the primary keys first.
 So first, execute `dropPrimaryKeys()`, then `dropNotNulls()`.
+  
+## Requirements 
+
+Java >= 7
 
 ## Todo
 
