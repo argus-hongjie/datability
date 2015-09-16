@@ -32,8 +32,7 @@ connection.createStatement()
 
 ## Databases support
 
-* [x] PostgreSQL 9.4
-  * [x] Multiple tables
+* [x] PostgreSQL 9.1 to 9.4
   * [x] Drop not-nulls
   * [x] Drop primary keys
   * [x] Drop foreign keys
