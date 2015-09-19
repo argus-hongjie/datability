@@ -8,22 +8,42 @@ Drop primary keys, foreign keys, not nulls to let you test insert only the data 
 
 ## Usage
 
-Example with PostgreSQL:
+In your pom.xml:
+
+``` xml
+<dependency>
+  <groupId>com.tomsquest</groupId>
+  <artifactId>datability</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+Usage example:
 
 ``` java
-// Obtain a Connection
-Connection connection = DriverManager
-    .getConnection("jdbc:postgresql://host:port/database", "user", "pass");
-
-// Create a test table
-connection.createStatement()
-    .execute("create table mytable (notnullcolumn int not null)");
-
-// Here the magic happens : drop those nasty constraints !
 Databases.postgresql(connection)
     .dropNotNulls("mytable", "anothertable")
     .dropPrimaryKeys("mytable", "anothertable")
-    .dropForeignKeys("mytable", "anothertable");
+    .dropForeignKeys("mytable", "anothertable")
+    .dropAll("yetAnotherTable"); // drop all not-nulls, primary and foreign keys
+```
+
+Full example (plain Jdbc):
+
+``` java
+// Obtain a Connection from DriverManager or DataSource
+Connection connection = 
+    DriverManager.getConnection("jdbc:postgresql://host:port/db", "user", "pass");
+
+// Let's create a table with a nasty not null
+connection.createStatement().execute("create table mytable (notnullcolumn int not null)");
+
+// Here the magic happens : drop those constraints !
+Databases.postgresql(connection)
+    .dropNotNulls("mytable", "anothertable")
+    .dropPrimaryKeys("mytable", "anothertable")
+    .dropForeignKeys("mytable", "anothertable")
+    .dropAll("yetAnotherTable";
 
 // Success: the constraints were removed
 connection.createStatement()
@@ -51,7 +71,6 @@ Java >= 7
 
 ## Todo
 
-* [ ] Upload to Central and update readme with <dependency>
 * [ ] Explain Why it matters to testing only the relevant data
 * Support additional databases
   * [ ] MySQL
