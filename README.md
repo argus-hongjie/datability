@@ -1,6 +1,7 @@
 # Datability
 
 [![Build Status](https://travis-ci.org/tomsquest/datability.svg?branch=master)](https://travis-ci.org/tomsquest/datability)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.tomsquest/datability/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.tomsquest/datability)
 
 Test what matter the most in your Integration test.
 
