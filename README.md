@@ -7,9 +7,28 @@ Test what matter the most in your Integration test.
 
 Drop primary keys, foreign keys, not nulls to let you test insert only the data that matters.
 
+## Why
+
+Several years ago, I contracted for a Mobile carrier. The team mission was to remotely configure mobile phone by sending 
+binary SMS for NFC payments. The data model was something like this : a `Phone` has 1-* `SimCard`, a `SimCard` has a `Carrier`, a `Carrier` has 1-* 
+`CarrierConfig`, a `SimCard` has 1-* `TransportProtocols`, a `TransportProtocols` has 1-* `ProtocolVersion`... and this continues 
+over ~30 tables, all with many foreign keys and not nulls.
+
+Inserting a line in one of the child tables was very tedious due to the foreign keys requiring to insert all values until 
+the top of the chain. And all I wanted was to test a complex SQL query on one of these tables. 
+
+So the idea was born : just get rid of these constraints. They are not relevant for my test case.
+Eg. Why do I have to insert a `Carrier` when I just require a `SimCard` ? Let me insert a null in `carrier_fk` !.
+
+TL;DR
+* Database Constraints are useful in **production**
+* Some integration tests benefit of having constraints disabled
+* Some database engines make this even better: PostgreSQL can rollback `Alter table` and MySql can completely ignore 
+them with `set foreign_key_checks=0`
+
 ## Usage
 
-In your pom.xml:
+To use Datability in your test, add it to your pom.xml:
 
 ``` xml
 <dependency>
@@ -19,7 +38,7 @@ In your pom.xml:
 </dependency>
 ```
 
-Usage example:
+Then in java: 
 
 ``` java
 Databases.postgresql(connection)
@@ -29,7 +48,7 @@ Databases.postgresql(connection)
     .dropAll("yetAnotherTable"); // drop all not-nulls, primary and foreign keys
 ```
 
-Full example (plain Jdbc):
+Full example using plain Jdbc:
 
 ``` java
 // Obtain a Connection from DriverManager or DataSource
@@ -63,8 +82,15 @@ connection.createStatement()
 
 ### PostgreSQL
 
-It is not possible to drop not null on primary keys without removing the primary keys first.
+* PostgreSQL can rollback DDL statements. Ie. if Datability is called in a Transaction, rollbacking this transaction will
+let the database unmodified.
+
+* It is not possible to drop not null on primary keys without removing the primary keys first.
 So first, execute `dropPrimaryKeys()`, then `dropNotNulls()`.
+
+### MySQL
+
+Use `set foreign_key_checks=0` and enjoy testing. 
   
 ## Requirements 
 
@@ -72,8 +98,6 @@ Java >= 7
 
 ## Todo
 
-* [ ] Explain Why it matters to testing only the relevant data
 * Support additional databases
-  * [ ] MySQL
   * [ ] Oracle
   * [ ] SqlServer
