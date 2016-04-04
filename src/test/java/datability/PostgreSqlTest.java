@@ -91,6 +91,18 @@ public class PostgreSqlTest {
     }
 
     @Test
+    public void drop_composed_primary_key() throws Exception {
+        executeSql("drop table if exists mytable",
+                "create table mytable (a int, b int, constraint pk primary key (a, b))");
+
+        try (Connection connection = openConnection()) {
+            Databases.postgresql(connection).dropPrimaryKeys("mytable");
+            connection.createStatement().execute("insert into mytable(a, b) values (1, 1)");
+            connection.createStatement().execute("insert into mytable(a, b) values (1, 1)");
+        }
+    }
+
+    @Test
     public void drop_foreign_keys_on_single_table() throws Exception {
         executeSql(
                 "drop table if exists foreigntable", "drop table if exists srctable",
