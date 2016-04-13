@@ -174,7 +174,7 @@ public class PostgreSqlTest {
     @Test
     public void drop_not_nulls_given_null_tables() throws Exception {
         try {
-            Databases.postgresql(mock(Connection.class)).dropNotNulls(null);
+            Databases.postgresql(mock(Connection.class)).dropNotNulls((String[]) null);
             fail();
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
@@ -184,7 +184,7 @@ public class PostgreSqlTest {
     @Test
     public void drop_not_primary_keys_given_null_tables() throws Exception {
         try {
-            Databases.postgresql(mock(Connection.class)).dropPrimaryKeys(null);
+            Databases.postgresql(mock(Connection.class)).dropPrimaryKeys((String[]) null);
             fail();
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
@@ -194,7 +194,7 @@ public class PostgreSqlTest {
     @Test
     public void drop_not_foreign_keys_given_null_tables() throws Exception {
         try {
-            Databases.postgresql(mock(Connection.class)).dropForeignKeys(null);
+            Databases.postgresql(mock(Connection.class)).dropForeignKeys((String[]) null);
             fail();
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
@@ -204,7 +204,7 @@ public class PostgreSqlTest {
     @Test
     public void drop_all_given_null_tables() throws Exception {
         try {
-            Databases.postgresql(mock(Connection.class)).dropAll(null);
+            Databases.postgresql(mock(Connection.class)).dropAll((String[]) null);
             fail();
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
