@@ -3,6 +3,7 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.tomsquest/datability/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.tomsquest/datability)
 [![Build Status](https://travis-ci.org/tomsquest/datability.svg?branch=master)](https://travis-ci.org/tomsquest/datability)
 [![codecov.io](https://codecov.io/github/tomsquest/datability/coverage.svg?branch=master)](https://codecov.io/github/tomsquest/datability?branch=master)
+
 Test what matter the most in your Integration test.
 
 Drop primary keys, foreign keys, not nulls to let you test insert only the data that matters.
