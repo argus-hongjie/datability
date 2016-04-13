@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -167,6 +169,46 @@ public class PostgreSqlTest {
 
         verify(connection).isClosed();
         verifyNoMoreInteractions(connection);
+    }
+
+    @Test
+    public void drop_not_nulls_given_null_tables() throws Exception {
+        try {
+            Databases.postgresql(mock(Connection.class)).dropNotNulls(null);
+            fail();
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @Test
+    public void drop_not_primary_keys_given_null_tables() throws Exception {
+        try {
+            Databases.postgresql(mock(Connection.class)).dropPrimaryKeys(null);
+            fail();
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @Test
+    public void drop_not_foreign_keys_given_null_tables() throws Exception {
+        try {
+            Databases.postgresql(mock(Connection.class)).dropForeignKeys(null);
+            fail();
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @Test
+    public void drop_all_given_null_tables() throws Exception {
+        try {
+            Databases.postgresql(mock(Connection.class)).dropAll(null);
+            fail();
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
     private Connection openConnection() throws SQLException {
