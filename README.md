@@ -10,6 +10,13 @@ Drop primary keys, foreign keys, not nulls to let you test insert only the data 
 
 ## Why
 
+**TL;DR**
+
+* Database Constraints are useful in **production**
+* Some integration tests benefit of having constraints disabled
+* Some database engines make this even better: PostgreSQL can rollback `Alter table` and MySql can completely ignore 
+them with `set foreign_key_checks=0`
+
 Several years ago, I contracted for a Mobile carrier. The team mission was to remotely configure mobile phone by sending 
 binary SMS for NFC payments. The data model was something like this : a `Phone` has 1-* `SimCard`, a `SimCard` has a `Carrier`, a `Carrier` has 1-* 
 `CarrierConfig`, a `SimCard` has 1-* `TransportProtocols`, a `TransportProtocols` has 1-* `ProtocolVersion`... and this continues 
@@ -20,12 +27,6 @@ the top of the chain. And all I wanted was to test a complex SQL query on one of
 
 So the idea was born : just get rid of these constraints. They are not relevant for my test case.
 Eg. Why do I have to insert a `Carrier` when I just require a `SimCard` ? Let me insert a null in `carrier_fk` !.
-
-TL;DR
-* Database Constraints are useful in **production**
-* Some integration tests benefit of having constraints disabled
-* Some database engines make this even better: PostgreSQL can rollback `Alter table` and MySql can completely ignore 
-them with `set foreign_key_checks=0`
 
 ## Usage
 
