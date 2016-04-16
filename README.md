@@ -36,7 +36,7 @@ To use Datability in your test, add it to your pom.xml:
 <dependency>
   <groupId>com.tomsquest</groupId>
   <artifactId>datability</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
